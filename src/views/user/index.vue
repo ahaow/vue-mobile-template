@@ -2,6 +2,8 @@
   <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
     <div>刷新次数: {{ count }}</div>
     <div class="user" id="user">{{name}}</div>
+
+    <input type="text" v-model="value" @change="handleChange" />
   </van-pull-refresh>
 </template>
 
@@ -11,13 +13,25 @@ import { PullRefresh } from "vant";
 export default {
   name: "user",
   data() {
-    return {};
+    return {
+      isLoading: "",
+      count: "",
+      value: "",
+    };
   },
   components: {
-    vanPullRefresh: PullRefresh
+    vanPullRefresh: PullRefresh,
   },
   computed: {
     ...mapState(["name"]),
+  },
+  methods: {
+    handleChange() {
+      console.log(this.value);
+    },
+    onRefresh() {
+
+    }
   },
   mounted() {},
 };

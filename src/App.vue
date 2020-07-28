@@ -8,13 +8,16 @@
 </template>
 
 <script>
-const initRem = () => {
-  let cale =
-    window.screen.availWidth > 750 ? 2 : window.screen.availWidth / 375;
-  document.documentElement.style.fontSize = `${100 * cale}px`;
-};
+// const initRem = () => {
+//   let cale =
+//     window.screen.availWidth > 750 ? 2 : window.screen.availWidth / 375;
+//   document.documentElement.style.fontSize = `${100 * cale}px`;
+// };
 window.addEventListener("DOMContentLoaded", () => {
-  initRem();
+  const html = document.getElementsByTagName("html")[0];
+  let fontSize = window.innerWidth / 10;
+  fontSize = fontSize > 50 ? 50 : fontSize;
+  html.style.fontSize = fontSize + "px";
 });
 export default {
   name: "App",
