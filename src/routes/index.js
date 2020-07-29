@@ -30,6 +30,36 @@ const router = new VueRouter({
                 keepAlive: false,
                 auth: false,
             }
+        },
+        {
+            path: "/other",
+            name: "Other",
+            component: () => import("../views/other/index.vue"),
+            meta: {
+                title: "其他",
+                keepAlive: false,
+                auth: false,
+            }
+        },
+        {
+            path: "/list",
+            name: "List",
+            component: () => import("../views/list/index.vue"),
+            meta: {
+                title: "列表",
+                keepAlive: false,
+                auth: false,
+            }
+        },
+        {
+            path: "/cs",
+            name: "Cs",
+            component: () => import("../views/cs/index.vue"),
+            meta: {
+                title: "测试",
+                keepAlive: false,
+                auth: false,
+            }
         }
     ]
 })
