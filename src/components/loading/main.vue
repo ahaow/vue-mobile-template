@@ -2,7 +2,7 @@
   <div class="mask" v-if="loading" @click="handleClick">
     <transition name="fade">
       <div class="little-tip">
-        <img src="../../../assets/images/loading.png" alt class="loading" />
+        <img src="../../assets/images/loading.png" alt class="loading" />
         <span>{{tip}}</span>
       </div>
     </transition>

@@ -1,3 +1,3 @@
-import Loading from "./src/main"
+import Loading from "./main"
 
 export default Loading;

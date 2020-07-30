@@ -4,12 +4,12 @@ import store from "./store"
 import App from './App.vue'
 import { get, post } from "./request/http"
 import Loading from "./components/loading"
+import Dialog from "./components/dialog"
 
 Vue.config.productionTip = false
 Vue.prototype.$http = { get, post }
 Vue.prototype.$loading = Loading;
-
-console.log(Vue.prototype)
+Vue.prototype.$Dialog = Dialog;
 
 new Vue({
   router,
