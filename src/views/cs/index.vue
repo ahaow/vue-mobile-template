@@ -26,9 +26,13 @@ export default {
           console.log(err);
         });
     },
-    handleClick() {},
+    handleClick() {
+      throw new Error("123")
+    },
   },
-  mounted() {},
+  mounted() {
+   
+  },
 };
 </script>
 

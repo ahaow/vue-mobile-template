@@ -79,7 +79,6 @@ export function file2Blob(file) {
         reader.onload = function (e) {
             resolve(new Blob([reader.result], { type: file.type }))
         }
-
         reader.onerror = function (err) {
             reject(err)
         }

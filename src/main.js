@@ -5,11 +5,13 @@ import App from './App.vue'
 import { get, post } from "./request/http"
 import Loading from "./components/loading"
 import Dialog from "./components/dialog"
+import VConsole from "vconsole";
 
 Vue.config.productionTip = false
 Vue.prototype.$http = { get, post }
 Vue.prototype.$loading = Loading;
 Vue.prototype.$Dialog = Dialog;
+const vconsole = new VConsole();
 
 // Vue.directory("click-outside", {
 //   bind(el, binding, vnode) {

@@ -108,3 +108,23 @@ export const _throttle = (fn, interval) => {
         }
     }
 }
+
+
+/**
+ * 一维转二维
+ * @param {*} array 
+ * @param {*} size 
+ */
+export const chunk = (array, size) => {
+    const length = array.length ? array.length : 0;
+    if (!length || !size) {
+        return [];
+    }
+    let index = 0;
+    let resIndex = 0;
+    const result = new Array(Math.ceil(length / size));
+    while (index < length) {
+        result[resIndex++] = array.slice(index, (index += size));
+    }
+    return result;
+}
