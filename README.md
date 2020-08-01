@@ -1,24 +1,14 @@
 # vue-mobile-template
 
-## Project setup
-```
-yarn install
-```
+## 使用第三方模块/库
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+`number-precision`: 解决浮点数运算精度丢失
 
-### Compiles and minifies for production
-```
-yarn build
-```
+## vue.config.js
 
-### Lints and fixes files
+```js
+// 1. 全局配置scss
+sass: {
+    additionalData: `@import "./src/assets/scss/_var.scss"`;
+}
 ```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

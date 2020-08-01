@@ -10,6 +10,17 @@ module.exports = {
         extract: true,
         sourceMap: true,
         loaderOptions: {
+            //  全局配置scss
+            sass: {
+                /**
+                 * sass-loader v9 使用 additionalData
+                 * sass-loader v8 使用 prependData
+                 */
+                additionalData: `
+                    @import "./src/assets/scss/_var.scss";
+                    @import "./src/assets/scss/mixin.scss";
+                `
+            },
             postcss: {
                 plugins: [
                     // require('postcss-px2rem')({
