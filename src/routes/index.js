@@ -52,6 +52,16 @@ const router = new VueRouter({
             }
         },
         {
+            path: "/video",
+            name: "Vide",
+            component: () => import("../views/video/index.vue"),
+            meta: {
+                title: "视频播放器",
+                keepAlive: false,
+                auth: false,
+            }
+        },
+        {
             path: "/cs",
             name: "Cs",
             component: () => import("../views/cs/index.vue"),
