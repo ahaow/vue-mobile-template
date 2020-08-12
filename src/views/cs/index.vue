@@ -1,56 +1,80 @@
 <template>
   <div class="cs">
-    123
-    <input type="file" name="file" @change="handleChange" />
-
-    <button @click="handleClick">点击</button>
-
-    <div class="hide">
-      <img :src="require('@/assets/images/loading.png')" alt="">
-    </div>
+    <video
+      autoplay="autoplay"
+      preload="auto"
+      type="application/vnd.apple.mpegurl"
+      webkit-playsinline="true"
+      playsinline
+      x-webkit-airplay="true"
+      class="full-height full-width"
+      controls="controls"
+      :src="videoSrc"
+      ref="video"
+    ></video>
   </div>
 </template>
 
 <script>
-import { blob2dataURL, file2blob } from "./../../utils/file";
-import { baseURL } from "./../../assets/data/base";
-import NP from "number-precision";
+import Hls from "hls.js";
 export default {
   name: "cs",
   data() {
-    return {};
+    return {
+      videoSrc: "",
+    };
   },
   computed: {},
   methods: {
-    handleChange(e) {
-      let file = e.target.files[0];
-      file2blob(file)
-        .then((res) => {
-          console.log("res", res);
-        })
-        .catch((err) => {
-          console.log(err);
+    getStream(source) {
+      console.log("wdnmd");
+      if (Hls.isSupported()) {
+        this.hls = new Hls();
+        this.hls.loadSource(source);
+        console.log(2);
+        this.hls.attachMedia(this.$refs.video);
+        this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          this.$refs.video.play();
         });
-    },
-    handleClick() {
-      throw new Error("123");
+      }
     },
   },
   mounted() {
-    let a = 0.1;
-    let b = 0.2;
-    let c = a + b;
-    let d = NP.plus(a, b);
-    console.log(d);
-    console.log(d === 0.3);
+    const u = navigator.userAgent;
+    alert(u);
+    let isAndroid = u.indexOf("Android") > -1 || u.indexOf("Adr") > -1;
+    let isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    let uc = navigator.userAgent.indexOf("UCBrowser") > -1;
+    let aliApp = navigator.userAgent.indexOf("AliApp(DingTalk") > -1;
+    let str = "http://192.168.38.96:10104/live/1291638743681204225.m3u8";
+    let qqApp = new RegExp("MQQBrowser").test(navigator.userAgent);
+
+    if (isiOS) {
+      alert(1);
+      this.videoSrc = str;
+    } else if (isAndroid) {
+      if (uc || aliApp || qqApp) {
+        alert(2);
+        this.videoSrc = str;
+      } else {
+        alert(3);
+        this.getStream(str);
+      }
+    } else {
+      alert(4);
+      this.getStream(str);
+    }
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .cs {
-  @include center;
-  color: $color-error;
   height: 5000px;
+  color: red;
+  video {
+    width: 300px;
+    height: 200px;
+  }
 }
 </style>
