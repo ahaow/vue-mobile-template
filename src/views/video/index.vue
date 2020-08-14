@@ -12,11 +12,15 @@
     <div v-show="!loading" class="video-player-warpper">
       <div class="player-video">
         <video ref="video" preload="auto" :src="videoSrc"></video>
+        <div @click="handleTogglePlay" class="player-video-mask">
+          <i v-show="!play" class="iconplay iconfont iconbofang"></i>
+        </div>
       </div>
       <div class="player-controls">
         <!-- 控制时长 -->
-        <div class="player-controls-t">
+        <div class="player-controls-t" ref="playerControls" @click="handleClickPlayerControls">
           <div class="player-controls-line" :style="{width: lineWidth + '%'}"></div>
+          <div class="player-controls-bar" :style="{left: lineWidth + '%'}"></div>
         </div>
         <!-- 控制其他 -->
         <div class="player-controls-b">
@@ -78,19 +82,23 @@
               <li class="r-item sy">
                 <span class="icon iconfont iconyinliang"></span>
                 <div class="paly-volumebar-wrp">
-                  <div class="txt" ref="volumeVal">0</div>
                   <div class="scroll" id="scroll">
                     <div class="bar" id="bar"></div>
                     <div class="mask" id="mask"></div>
                   </div>
+                  <div class="txt" ref="volumeVal">0%</div>
                 </div>
               </li>
               <!-- 画中画按钮   -->
               <li class="r-item qp" @click="handleCanvas">
                 <span class="icon iconfont iconchuangkouhua"></span>
               </li>
-              <!-- 全屏按钮   -->
-              < li class="r-item qp" @click="FullScreen">
+              <!-- 网页全屏按钮   -->
+              <li class="r-item qp" @click="requestFullScreen">
+                <span class="icon iconfont iconquanping1"></span>
+              </li>
+              <!-- 电脑全屏按钮   -->
+              <li class="r-item qp" @click="FullScreen">
                 <span class="icon iconfont iconquanping"></span>
               </li>
             </ul>
@@ -103,6 +111,7 @@
 
 <script>
 import { Switch } from "vant";
+import NP from "number-precision";
 export default {
   name: "video1",
   components: {
@@ -162,6 +171,7 @@ export default {
         },
       ],
       loop: false,
+      volume: 0, // 音量
     };
   },
   computed: {},
@@ -184,15 +194,18 @@ export default {
     handleAsync() {
       this.handleGetSrc()
         .then((res) => {
-          this.videoSrc = res;
-          this.loading = false;
-          this.video = this.$refs.video;
-          this.handleVideoCanplay();
-          this.handleVideoTimeupdate();
-          this.handleVideoEnded();
-          this.handleVideoPlay();
-          this.handleVideoPause();
-          this.handleBarDown();
+          this.$nextTick(() => {
+            this.videoSrc = res;
+            this.loading = false;
+            this.video = this.$refs.video;
+            this.video.volume = this.volume;
+            this.handleVideoCanplay();
+            this.handleVideoTimeupdate();
+            this.handleVideoEnded();
+            this.handleVideoPlay();
+            this.handleVideoPause();
+            this.handleBarDown();
+          });
         })
         .catch((err) => {
           console.log("err", err);
@@ -262,6 +275,14 @@ export default {
       this.play = false;
       this.video.pause();
     },
+    // 点击切换播放
+    handleTogglePlay() {
+      if (this.play) {
+        this.handlePause();
+      } else {
+        this.handlePlay();
+      }
+    },
     // 控制视频播放器全屏
     FullScreen() {
       const videoDom = this.$refs.video;
@@ -271,6 +292,17 @@ export default {
         videoDom.mozRequestFullScreen();
       } else if (videoDom.webkitRequestFullScreen) {
         videoDom.webkitRequestFullScreen();
+      }
+    },
+    // 控制视频播放器网页全屏
+    requestFullScreen() {
+      let docEle = document.documentElement;
+      if (docEle.requestFullscreen) {
+        docEle.requestFullscreen();
+      } else if (docEle.mozRequestFullScreen) {
+        docEle.mozRequestFullScreen();
+      } else if (docEle.webkitRequestFullScreen) {
+        docEle.webkitRequestFullScreen();
       }
     },
     // 控制开启视频画中画
@@ -293,38 +325,38 @@ export default {
     },
     // 控制音量移动
     handleBarDown(e) {
-      const scroll = document.getElementById("scroll");
-      const bar = document.getElementById("bar");
-      const mask = document.getElementById("mask");
-      const volumeVal = this.$refs.volumeVal;
-      const scrollHeight = scroll.offsetHeight;
-      const barHeight = bar.offsetHeight;
-      let barTop;
-      let delVal = scrollHeight - barHeight;
-      bar.onmousedown = (event) => {
-        let topVal = event.clientY - bar.offsetTop;
-        document.onmousemove = (event) => {
-          barTop = event.clientY - topVal;
-          if (barTop < 0) {
-            barTop = 0;
-          } else if (barTop < scrollHeight - barHeight) {
-            bar.style.bottom = delVal - barTop + "px";
-            mask.style.height = delVal - barTop + "px";
-            // console.log(55 / (delVal - barTop / 55));
-            console.log(55 / barTop);
-            /**
-             * 55 = 100 0.55 = 1;
-             *
-             */
-          } else if (barTop >= scrollHeight - barHeight) {
-            barTop = scrollHeight - barHeight;
-          }
-        };
-      };
-
-      document.documentElement.onmouseup = () => {
-        document.onmousemove = null;
-      };
+      setTimeout(() => {
+        const scroll = document.getElementById("scroll");
+        const bar = document.getElementById("bar");
+        const mask = document.getElementById("mask");
+        const volumeVal = this.$refs.volumeVal;
+        const scrollWidth = scroll.offsetWidth;
+        const barWidth = bar.offsetWidth;
+        let barLeft;
+        let delVal = scrollWidth - barWidth;
+        bar.addEventListener("mousedown", (e) => {
+          let leftVal = e.clientX - bar.offsetLeft;
+          document.onmousemove = (e) => {
+            barLeft = e.clientX - leftVal;
+            // console.log("barleft", barLeft);
+            if (barLeft < 0) {
+              barLeft = 0;
+            } else if (barLeft > scrollWidth - barWidth) {
+              barLeft = scrollWidth - barWidth;
+            }
+            bar.style.left = barLeft + "px";
+            mask.style.width = barLeft + "px";
+            let num = ((barLeft / delVal) * 100).toFixed(0);
+            let volume = num / 100;
+            this.volume = volume;
+            this.video.volume = this.volume;
+            volumeVal.innerText = num + "%";
+          };
+        });
+        document.documentElement.addEventListener("mouseup", () => {
+          document.onmousemove = null;
+        });
+      }, 0);
     },
     // 设置倍速
     handleSetSpeed(key, speed) {
@@ -334,6 +366,20 @@ export default {
     // 设置清晰度
     handleSetDefinition(key) {
       this.definitionKey = key;
+    },
+    // 设置进度条播放当前进度
+    handleClickPlayerControls(e) {
+      // 1. 获取点击时的视频偏移量
+      let offsetX = e.offsetX;
+      // 2. 获取视频条的总长度
+      let controls = this.$refs.playerControls.offsetWidth;
+      // 3. 获取百分比
+      let val = offsetX / controls;
+      // 根据总时长 拿到对应百分比的 时长
+      let result = val * this.durationNum;
+      // 设置当前时长,并播放
+      this.video.currentTime = result;
+      this.handlePlay();
     },
   },
   mounted() {
@@ -391,9 +437,28 @@ body {
     height: 100%;
     background-color: #000;
     .player-video {
+      position: relative;
       margin: 15px auto 20px;
       width: 624px;
       height: 372px;
+      .player-video-mask {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 999;
+        cursor: pointer;
+      }
+      .iconplay {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        font-size: 42px;
+        color: red;
+        cursor: pointer;
+        z-index: 999;
+      }
       video {
         width: 100%;
         height: 100%;
@@ -422,6 +487,14 @@ body {
           position: absolute;
           height: 100%;
           background-color: #d9d9d9;
+        }
+        .player-controls-bar {
+          position: absolute;
+          top: -2px;
+          left: 0;
+          width: 8px;
+          height: 6px;
+          background-color: red;
         }
       }
       .player-controls-b {
@@ -511,33 +584,37 @@ body {
                 }
                 .paly-volumebar-wrp {
                   position: absolute;
-                  left: -5px;
-                  top: -95px;
-                  width: 32px;
-                  height: 100px;
+                  left: -45px;
+                  top: -30px;
+                  width: 100px;
+                  height: 32px;
                   display: flex;
-                  flex-direction: column;
+                  flex-direction: row;
                   justify-content: center;
                   align-items: center;
                   background-color: rgba(21, 21, 21, 0.9);
                   border-radius: 2px;
                   visibility: hidden;
                   .txt {
+                    margin-left: 10px;
                     color: #e7e7e7;
                     font-size: 13px;
                   }
                   .scroll {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
                     position: relative;
-                    width: 2px;
-                    height: 65px;
+                    width: 65px;
+                    height: 2px;
                     background: #ccc;
                     .bar {
                       width: 10px;
                       height: 10px;
                       background: #369;
                       position: absolute;
-                      bottom: 0px;
-                      left: -4px;
+                      top: -4px;
+                      left: 0px;
                       border-radius: 50%;
                       cursor: pointer;
                     }
@@ -546,8 +623,8 @@ body {
                       left: 0;
                       bottom: 0;
                       background: #369;
-                      width: 2px;
-                      height: 0;
+                      width: 0px;
+                      height: 2px;
                     }
                   }
                 }
