@@ -5,7 +5,7 @@ import App from './App.vue'
 import { get, post } from "./request/http"
 import Loading from "./components/loading"
 import Dialog from "./components/dialog"
-import VConsole from "vconsole";
+// import VConsole from "vconsole";
 
 // import Fastclick from "fastclick"
 
@@ -13,7 +13,7 @@ Vue.config.productionTip = false
 Vue.prototype.$http = { get, post }
 Vue.prototype.$loading = Loading;
 Vue.prototype.$Dialog = Dialog;
-const vconsole = new VConsole();
+// const vconsole = new VConsole();
 
 // Fastclick.attach(document.body);
 // Fastclick.prototype.focus = (el) => { 'use strict', ele.focus }
